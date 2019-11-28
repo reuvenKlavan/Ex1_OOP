@@ -64,7 +64,7 @@ public class Polynom<T> implements Polynom_able{
 		Iterator<Monom> iter = iteretor(); 
 		while(iter.hasNext()) {
 			Monom m = iter.next();
-			function = function + m.get_coefficient()*Math.pow(x, m.get_power());
+			function = function + m.f(x);
 		}
 		return function;
 	}
@@ -185,7 +185,13 @@ public class Polynom<T> implements Polynom_able{
 	}
 
 	@Override
-	public boolean equals(Polynom_able p1) {
+	public boolean equals(Object obj) {
+		
+		if(!(obj instanceof Polynom)) {
+			return false;
+		}
+		
+		Polynom p1 = (Polynom)obj;
 		Monom_Comperator comparePolynom = new Monom_Comperator();
 		Iterator<Monom> iter1 = iteretor();
 		Iterator<Monom> iter2 = p1.iteretor();
@@ -314,4 +320,10 @@ public class Polynom<T> implements Polynom_able{
 		
 		return output;
 	}
+	@Override
+	public function initFromString(String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
