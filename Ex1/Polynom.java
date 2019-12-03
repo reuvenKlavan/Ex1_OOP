@@ -156,7 +156,7 @@ public class Polynom<T> implements Polynom_able{
 	@Override
 	public void multiply(Polynom_able p1) {
 		Iterator<Monom> iterP1 = p1.iteretor();
-		int p1Size = sizeOfPolynomAble(p1);
+		int p1Size = sizeOfFunction(p1);
 		int place = 0;
 		Polynom_able[] tmp = new Polynom[p1Size];
 		
@@ -193,7 +193,7 @@ public class Polynom<T> implements Polynom_able{
 		}	
 	}
 	
-	private int sizeOfPolynomAble(Polynom_able p1) {
+	public int sizeOfFunction(Polynom_able p1) {
 		Iterator<Monom> iter = p1.iteretor();
 		int size = 0;
 		
@@ -270,7 +270,7 @@ public class Polynom<T> implements Polynom_able{
 
 	@Override
 	public Polynom_able copy() {
-		Polynom_able copyPolynom = new Polynom(); 
+		Polynom_able copyPolynom = new Polynom<>(); 
 		Iterator<Monom> iter = iteretor(); 
 		while(iter.hasNext()) {
 			Monom next = iter.next();
@@ -279,7 +279,6 @@ public class Polynom<T> implements Polynom_able{
 			Monom add = new Monom(a,b);
 			copyPolynom.add(add);
 		}
-		
 		return copyPolynom;
 	}
 
@@ -329,18 +328,25 @@ public class Polynom<T> implements Polynom_able{
 		String output="";
 		int place=0;
 		
-		if(iter.hasNext())
-			output+= iter.next().toString()+" + ";
+		if(monoms.size()-1==0)//if there is only one element
+			output+=iter.next().toString();
+			
+		if(iter.hasNext())//
+			output+= iter.next().toString();
+			
+		if(place == monoms.size()-2)//before the last element 
+			output+= " + " +iter.next().toString();
 			
 		while(iter.hasNext()) { 
 			output+= iter.next().toString()+" + ";
 			place++;
-			if(place == monoms.size()-2)
+			if(place == monoms.size()-2)//before the last element 
 				output+=iter.next().toString();
+			}
+			
+			return output;
 		}
-		
-		return output;
-	}
+	
 	@Override
 	public function initFromString(String s) {
 		function initatePolynom = new Polynom(s);

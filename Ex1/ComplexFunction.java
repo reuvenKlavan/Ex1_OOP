@@ -316,24 +316,46 @@ public class ComplexFunction<T> implements complex_function  {
 		return Op;
 	}
 	
+	
+	
+	
+	
+	
+	
 	@Override
 	public String toString() {
 		String output= "";
 		
 		if(left instanceof Monom || left instanceof Polynom) {
-			output = left.toString();
+			output += ChooseString(Op)+ left.toString();
 		}
 		
 		else if(left instanceof ComplexFunction) {
-			
+			output = output + left.toString();
 		}
 		
-		return "";
+		if(right == null) {
+			output +=')'; 
+		}
+		
+		else if(left instanceof Monom || left instanceof Polynom) {
+			output += ',' +right.toString()+ ')';
+		}
+		
+		else if(left instanceof ComplexFunction) {
+			output = ','+ output + right.toString() + ')';
+		}
+		
+		return output;
 	}
+	
+	
+	
+	
+	
 	
 	@Override
 	public boolean equals(Object obj) {
-		
 		
 		return false;
 	}
@@ -344,14 +366,37 @@ public class ComplexFunction<T> implements complex_function  {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	private String ChooseString(Operation Op) {
+		
+		if(this.Op == Op.Plus) {
+			return "Plus(";
+		}
+		
+		else if(this.Op == Op.Times) {
+			return "Times(";
+		}
+		
+		else if(this.Op == Op.Divid) {
+			return "Divid(";
+		}
+		
+		else if(this.Op == Op.Max) {
+			return "Max(";
+		}
+		
+		else if(this.Op == Op.Min) {
+			return "Min(";
+		}
+		
+		else if(this.Op == Op.Comp) {
+			return "Comp(";
+		}
+		
+		else {
+			throw new IllegalArgumentException("Illegal Operation");
+		}	
+	}
+
 	private void ChooseOperation(String s) { 
 		
 		if(s.equals("Plus")) {
