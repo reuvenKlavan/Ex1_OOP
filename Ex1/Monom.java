@@ -50,9 +50,6 @@ public class Monom implements function{
 	public boolean isZero() {return this.get_coefficient() == 0;}
 	// ***************** add your code below **********************
 	public Monom(String s) {
-		boolean foundCoe= false;
-		
-		
 		if(s==null) {
 			throw new IllegalArgumentException("not valid String");
 		}
@@ -154,19 +151,24 @@ public class Monom implements function{
 	}
 	// you may (always) add other methods.
 	
-	public boolean equals(Monom m){
-		
-		Monom_Comperator comp = new Monom_Comperator();
-		
-		if(comp.compareCoefficient(this, m)==0 && this.get_coefficient()==0)
-			return true;
-		
-		else if(comp.compare(this, m)==0 && comp.compareCoefficient(this, m)==0)
-			return true;
-			
-		else 
+	public boolean equals(Object obj){
+		if(!(obj instanceof Monom)) {
 			return false;
+		}
 		
+		else {
+			Monom m = (Monom)obj;
+			Monom_Comperator comp = new Monom_Comperator();
+			
+			if(comp.compareCoefficient(this, m)==0 && this.get_coefficient()==0)
+				return true;
+			
+			else if(comp.compare(this, m)==0 && comp.compareCoefficient(this, m)==0)
+				return true;
+			
+			else 
+				return false;
+		}
 	}
 
 	//****************** Private Methods and Data *****************
@@ -185,14 +187,15 @@ public class Monom implements function{
 	@Override
 	
 	public function initFromString(String s) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		function initMonom = new Monom(s);
+		return initMonom;
+	}	
+	
 
 	@Override
 	public function copy() {
-		// TODO Auto-generated method stub
-		return null;
+		function copyMonom = new Monom(_coefficient, _power); 
+		return copyMonom;
 	}
 	
 	

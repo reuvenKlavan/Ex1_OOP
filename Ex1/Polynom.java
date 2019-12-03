@@ -37,25 +37,46 @@ public class Polynom<T> implements Polynom_able{
 	 */
 	public Polynom(String s) {
 		monoms= new ArrayList();
-		s.replaceAll("-", "+-");
 		String monom = "";
 		
 		for(int i = 0; i < s.length(); i++) {
-			if(s.charAt(i)>48 && s.charAt(i)<57)
+			
+			if(s.length()-1 == i) { 
+				monom+=s.charAt(i);
+				Monom m = new Monom(monom);
+				add(m);
+			}
+			
+			else if(s.charAt(i)>47 && s.charAt(i)<58)
 				monom+=s.charAt(i);
 		
-			else if(s.charAt(i)=='x'||s.charAt(i)=='.'||s.charAt(i)=='^'||s.charAt(i)=='-')
+			else if(s.charAt(i)=='x'||s.charAt(i)=='.'||s.charAt(i)=='^')
 				monom+=s.charAt(i);
-		
+			
 			else if(s.charAt(i)=='+') {
 				Monom m = new Monom(monom);
-				monoms.add(m);
+				add(m);
+				monom = "";
+			}
+			
+			else if(s.charAt(i)=='-') {
+				if(monom.equals("")) {
+					monom="-";
+				}
+				
+				else {
+					Monom m = new Monom(monom);
+					add(m);
+					monom = "-";
+				}
 			}
 			
 			else {
 				throw new IllegalArgumentException();
 			}
 		}
+		Comparator<Monom> com = new Monom_Comperator();
+		monoms.sort(com);
 	}	
 	
 	@Override
@@ -322,8 +343,7 @@ public class Polynom<T> implements Polynom_able{
 	}
 	@Override
 	public function initFromString(String s) {
-		// TODO Auto-generated method stub
-		return null;
+		function initatePolynom = new Polynom(s);
+		return initatePolynom;
 	}
-	
 }
