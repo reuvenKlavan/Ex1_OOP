@@ -1,6 +1,6 @@
 package Ex1;
 
-public class ComplexFunction<T> implements complex_function  {
+public class ComplexFunction implements complex_function  {
 	
 	private function left;
 	private function right;
@@ -10,8 +10,8 @@ public class ComplexFunction<T> implements complex_function  {
 	public ComplexFunction(function left, function right, Operation Op) {
 		this.left = left;
 		this.right = right;
-		if(right == null && this.Op!=Op.None) {
-			this.Op = Op.None;
+		if(right == null && this.Op!=Operation.None) {
+			this.Op = Operation.None;
 		}
 		else {
 			this.Op = Op;
@@ -37,46 +37,38 @@ public class ComplexFunction<T> implements complex_function  {
 		double sumRight = 0 , sumLeft = 0;
 		double sumOfComp = 0;
 		
-		if(right instanceof Monom) {
-			Monom mr = (Monom)right;
-			sumRight = mr.f(x);
+		if(right == null) {
+			sumRight= sumRight + 0;
 		}
 		
-		else if(right instanceof Polynom) {
-			Polynom<?> pr = (Polynom<?>)right;
-			sumRight = pr.f(x);
+		else if(right instanceof Monom || right instanceof Polynom) {
+			sumRight = sumRight + right.f(x);	
 		}
 		
 		else
 			sumRight = sumRight+right.f(x);
 		
-		if(this.Op != Op.Comp) {
 		
-			if(left instanceof Monom) {
-				Monom ml = (Monom)left;
-				sumLeft =  ml.f(x);
-			}
 		
-			else if(left instanceof Polynom) {
-				Polynom<?> pl = (Polynom<?>)left;
-				sumLeft = pl.f(x);
+		if(this.Op != Operation.Comp) {
+		
+			if(left instanceof Monom || left instanceof Polynom) {
+				sumLeft = sumLeft + left.f(x);
 			}
+			
 			else
-				sumLeft = sumLeft+left.f(x) ;
-		}
+				sumLeft = sumLeft+left.f(x);
+			
+		}	
+			
 		
-		else if(this.Op == Op.Comp) {
+		else if(this.Op == Operation.Comp) {
 		
 		
-			if(left instanceof Monom) {
-				Monom ml = (Monom)left;
-				sumLeft = ml.f(x);
+			if(left instanceof Monom || left instanceof Polynom) {
+				sumOfComp = sumOfComp + left.f(sumRight);
 			}
-		
-			else if(left instanceof Polynom) {
-				Polynom pl = (Polynom)left;
-				sumLeft = pl.f(x);
-			}
+			
 			else
 				sumOfComp = sumOfComp+left.f(sumRight);
 		}
@@ -121,14 +113,9 @@ public class ComplexFunction<T> implements complex_function  {
 		case Comp:
 			return sumOfComp;
 			
-		case None:
-			if(right == null) {
-				return sumLeft;
-			}
+		case None: 
+			return sumLeft;
 			
-			else {
-				return sumRight;
-			}
 		}
 		
 		return 0; // the 0 is for the progrem to compile while we return the wish value in the switch...case
@@ -144,6 +131,7 @@ public class ComplexFunction<T> implements complex_function  {
 	public function initFromString(String s) {
 		String left = "" , right = ""; 
 		function leftResult = null, rightResult= null;
+		Operation opResult=null;
 		int numOfBrackets=0;
 		int indexOfBracket = s.indexOf('(');
 		int indexOfComma = s.indexOf(',');
@@ -153,7 +141,7 @@ public class ComplexFunction<T> implements complex_function  {
 		
 		
 		if(indexOfBracket==-1 && indexOfComma==-1){
-			return new Polynom(s);
+			return new Polynom<>(s);
 			
 		}
 		
@@ -162,6 +150,7 @@ public class ComplexFunction<T> implements complex_function  {
 			
 			
 			for(int i = indexOfBracket+1; i <s.length() && !found;i++) {
+				opResult = ChooseOperation(s.substring(0,indexOfBracket));
 				
 				if(s.charAt(i)=='(') {
 					numOfBrackets++;
@@ -177,7 +166,7 @@ public class ComplexFunction<T> implements complex_function  {
 					right = s.substring(i+1,s.length()-1);										
 					leftResult = initFromString(left);					
 					rightResult = initFromString(right);
-					ChooseOperation(s.substring(0,indexOfBracket));
+					
 					found = !found;
 				}
 				
@@ -189,7 +178,7 @@ public class ComplexFunction<T> implements complex_function  {
 			
 		}
 		
-		function output = new ComplexFunction(leftResult, rightResult, this.Op);
+		function output = new ComplexFunction(leftResult, rightResult, opResult);
 		return output;
 		
 	}
@@ -243,7 +232,7 @@ public class ComplexFunction<T> implements complex_function  {
 		}
 		
 		cloneOP = this.Op;
-		function clone = new ComplexFunction<>(cloneLeft, cloneRight, cloneOP); 
+		function clone = new ComplexFunction(cloneLeft, cloneRight, cloneOP); 
 		return clone;
 	}
 	
@@ -255,50 +244,50 @@ public class ComplexFunction<T> implements complex_function  {
 
 	@Override
 	public void plus(function f1) {
-		function tmp = new ComplexFunction<>(left,right,Op);
+		function tmp = new ComplexFunction(left,right,Op);
 		this.left = tmp;
 		this.right = f1;
-		this.Op = Op.Plus;
+		this.Op = Operation.Plus;
 	}
 
 	@Override
 	public void mul(function f1) {
-		function tmp = new ComplexFunction<>(left,right,Op);
+		function tmp = new ComplexFunction(left,right,Op);
 		this.left = tmp;
 		this.right = f1;
-		this.Op = Op.Times;
+		this.Op = Operation.Times;
 	}
 
 	@Override
 	public void div(function f1) {
-		function tmp = new ComplexFunction<>(left,right,Op);
+		function tmp = new ComplexFunction(left,right,Op);
 		this.left = tmp;
 		this.right = f1;
-		this.Op = Op.Divid;		
+		this.Op = Operation.Divid;		
 	}
 
 	@Override
 	public void max(function f1) {
-		function tmp = new ComplexFunction<>(left,right,Op);
+		function tmp = new ComplexFunction(left,right,Op);
 		this.left = tmp;
 		this.right = f1;
-		this.Op = Op.Max;		
+		this.Op = Operation.Max;		
 	}
 
 	@Override
 	public void min(function f1) {
-		function tmp = new ComplexFunction<>(left,right,Op);
+		function tmp = new ComplexFunction(left,right,Op);
 		this.left = tmp;
 		this.right = f1;
-		this.Op = Op.Min;		
+		this.Op = Operation.Min;		
 	}
 
 	@Override
 	public void comp(function f1) {
-		function tmp = new ComplexFunction<>(left,right,Op);
+		function tmp = new ComplexFunction(left,right,Op);
 		this.left = tmp;
 		this.right = f1;
-		this.Op = Op.Comp;		
+		this.Op = Operation.Comp;		
 	}
 
 	@Override
@@ -327,7 +316,7 @@ public class ComplexFunction<T> implements complex_function  {
 		String output= "";
 		
 		if(left instanceof Monom || left instanceof Polynom) {
-			output += ChooseString(Op)+ left.toString();
+			output = ChooseString(Op)+ left.toString();
 		}
 		
 		else if(left instanceof ComplexFunction) {
@@ -335,11 +324,11 @@ public class ComplexFunction<T> implements complex_function  {
 		}
 		
 		if(right == null) {
-			output +=')'; 
+			output = output+')'; 
 		}
 		
 		else if(left instanceof Monom || left instanceof Polynom) {
-			output += ',' +right.toString()+ ')';
+			output = output+',' +right.toString()+ ')';
 		}
 		
 		else if(left instanceof ComplexFunction) {
@@ -356,8 +345,26 @@ public class ComplexFunction<T> implements complex_function  {
 	
 	@Override
 	public boolean equals(Object obj) {
+		boolean match = true;
+		if(obj instanceof function) {
+			function check = (function)obj;
+			double eps = 0.001; 
+			double x = -10.0;
+			while(x<10.0 && match) {
+				if(this.f(x) == check.f(x)) 
+					x=x+eps;
+					
+				else 	
+					 match = false;			
+			}
+		}
 		
-		return false;
+		else {	
+			match = false;
+		}
+		
+		return match;
+			
 	}
 	
 	
@@ -368,27 +375,27 @@ public class ComplexFunction<T> implements complex_function  {
 	
 	private String ChooseString(Operation Op) {
 		
-		if(this.Op == Op.Plus) {
+		if(this.Op == Operation.Plus) {
 			return "Plus(";
 		}
 		
-		else if(this.Op == Op.Times) {
+		else if(this.Op == Operation.Times) {
 			return "Times(";
 		}
 		
-		else if(this.Op == Op.Divid) {
+		else if(this.Op == Operation.Divid) {
 			return "Divid(";
 		}
 		
-		else if(this.Op == Op.Max) {
+		else if(this.Op == Operation.Max) {
 			return "Max(";
 		}
 		
-		else if(this.Op == Op.Min) {
+		else if(this.Op == Operation.Min) {
 			return "Min(";
 		}
 		
-		else if(this.Op == Op.Comp) {
+		else if(this.Op == Operation.Comp) {
 			return "Comp(";
 		}
 		
@@ -397,34 +404,38 @@ public class ComplexFunction<T> implements complex_function  {
 		}	
 	}
 
-	private void ChooseOperation(String s) { 
+	private Operation ChooseOperation(String s) { 
 		
 		if(s.equals("Plus")) {
-			this.Op = Op.Plus;
+			return Operation.Plus;
 		}
 		
 		else if(s.equals("Times")) {
-			this.Op = Op.Times;
+			return Operation.Times;
 		}
 		
 		else if(s.equals("Divid")) {
-			this.Op = Op.Divid;
+			return Operation.Divid;
 		}
 		
 		else if(s.equals("Max")) {
-			this.Op = Op.Max;
+			return Operation.Max;
 		}
 		
 		else if(s.equals("Min")) {
-			this.Op = Op.Min;
+			return Operation.Min;
 		}
 		
 		else if(s.equals("Comp")) {
-			this.Op = Op.Comp;
+			return Operation.Comp;
+		}
+		
+		else if(s.equals("None")) {
+			return Operation.None;
 		}
 		
 		else {
-			this.Op = Op.Error;
+			return Operation.Error;
 		}
 	}
 
