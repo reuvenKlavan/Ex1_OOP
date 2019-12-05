@@ -342,7 +342,14 @@ public class ComplexFunction implements complex_function  {
 	
 	
 	
-	
+	/**
+	 * This function checks if the two functions are equal.
+	 *  The logic comparison is out of our reach therefore
+	 *  this equals really implements a function of visual equals, by comparing the value of the two functions in
+	 *  particular range on x axis, in the range [-10,10], and by epsilon (0.001) steps.
+	 *  If all of the function values are equal, then you will get a True answer.
+	 *  Even thought the comparison is not logic, the result is, in most cases, the real logic equality.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		boolean match = true;
