@@ -27,7 +27,7 @@ public class Polynom<T> implements Polynom_able{
 	 * Zero (empty polynom)
 	 */
 	public Polynom() {
-		monoms=new ArrayList();
+		monoms=new ArrayList<>();
 		
 	}
 	/**
@@ -36,7 +36,7 @@ public class Polynom<T> implements Polynom_able{
 	 * @param s: is a string represents a Polynom
 	 */
 	public Polynom(String s) {
-		monoms= new ArrayList();
+		monoms= new ArrayList<>();
 		String monom = "";
 		
 		for(int i = 0; i < s.length(); i++) {
@@ -100,42 +100,56 @@ public class Polynom<T> implements Polynom_able{
 
 	@Override
 	public void add(Monom m1){
+		if(m1 == null) {
+			throw new IllegalArgumentException("monom is a null");
+		}
+		
 		Iterator<Monom> iter = iteretor(); 
 		Comparator<Monom> com = new Monom_Comperator();
-		boolean foundPower=false;;		
+		boolean foundPower=false;		
 		int place = 0;
 		Monom next;
 		
-		if(m1.isZero())
+		if(m1.isZero())//if m1==0 it dosn't change the polynom so we and function here
 			return;
 		
-		if(monoms.isEmpty()) {
+		if(monoms.isEmpty()) {//if the polynom f(x)=0, just add m1
 			monoms.add(m1);
 			foundPower = true;
 		}
 			
-		while(iter.hasNext() && !foundPower) {
+		while(iter.hasNext() && !foundPower) {// as long we didn't get to the end of a polynom 
+											  //and we not found monom with equal power of m1 in this polynom 
 			next = iter.next();
 				
-			if(com.compare(next,m1)==0) {
+			if(com.compare(next,m1)==0) {//next.power==m1.power we sum the coefficient
 				next.add(m1);
 				foundPower = true;
 
 			}	
 			
-			else if(com.compare(next,m1)<0) {
+			else if(com.compare(next,m1)>0) {//next.power>m1.power, when we will find the place for m1 we add him between 2 monoms
 				monoms.add(place, m1);
 				foundPower = true;
 			}
 			
-			else {
+			else {//next.power<m1.power
 				place++;
 			}
 		}
 		
-		if(!foundPower)
+		if(!foundPower)// adding in the end of the polynom
 			monoms.add(place, m1);
-	}	
+		
+		int size = monoms.size();
+		Monom last = monoms.get(size-1);
+		if(last.isZero())
+			monoms.remove(size-1);
+		
+	}		
+	
+	
+	
 	@Override
 	public void substract(Polynom_able p1) {
 		Iterator<Monom> iter = p1.iteretor();  
@@ -193,7 +207,7 @@ public class Polynom<T> implements Polynom_able{
 		}	
 	}
 	
-	public int sizeOfFunction(Polynom_able p1) {
+	private int sizeOfFunction(Polynom_able p1) {
 		Iterator<Monom> iter = p1.iteretor();
 		int size = 0;
 		
@@ -212,7 +226,7 @@ public class Polynom<T> implements Polynom_able{
 			return false;
 		}
 		
-		Polynom p1 = (Polynom)obj;
+		Polynom<Monom> p1 = (Polynom<Monom>)obj;
 		Monom_Comperator comparePolynom = new Monom_Comperator();
 		Iterator<Monom> iter1 = iteretor();
 		Iterator<Monom> iter2 = p1.iteretor();
@@ -236,6 +250,10 @@ public class Polynom<T> implements Polynom_able{
 
 	@Override
 	public boolean isZero() {
+		if(monoms.size() == 0) {
+			return true;
+		}
+		
 		Iterator<Monom> iter = iteretor(); 
 		while(iter.hasNext()) {
 			if(iter.next().get_coefficient()!=0)
@@ -249,21 +267,24 @@ public class Polynom<T> implements Polynom_able{
 		if(f(x0)*f(x1)>0)
 			throw new IllegalArgumentException("f(x0)*f(x1)>0 the elements not correct");
 		
-		double middle=(x0+x1)/2;
+		double middle=0;
 		boolean foundRoot=false;
+		double fx0 , fx1 , fMiddle;
 		
 		while(!foundRoot){
 			middle = (x0+x1)/2;
-			double fx0 = f(x0), fx1 = f(x1), fMiddle = f(middle);
+			fx0 = f(x0);
+			fx1 = f(x1);
+			fMiddle = f(middle);
 			
-			if(fMiddle < eps) 
+			if(Math.abs(fMiddle) < eps) 
 				foundRoot = true;
 				
 			else if(fx0*fMiddle<0)
-				fx1=fMiddle;
+				x1=middle;
 			
 			else
-				fx0=fMiddle; 
+				x0=middle; 
 		}
 		return middle;
 	}	
@@ -285,7 +306,7 @@ public class Polynom<T> implements Polynom_able{
 	@Override
 	public Polynom_able derivative() {
 		Iterator<Monom> iter = iteretor(); 		
-		Polynom_able derPoly = new Polynom();
+		Polynom_able derPoly = new Polynom<>();
 		
 		while(iter.hasNext()){
 			Monom next = iter.next();
@@ -297,7 +318,6 @@ public class Polynom<T> implements Polynom_able{
 	@Override
 	public double area(double x0, double x1, double eps) {
 		double areaSum = 0;
-		double fx0, fx1 = f(x1);
 		double rectangleSum = 0;
 		
 		if(x0>x1)
@@ -322,34 +342,35 @@ public class Polynom<T> implements Polynom_able{
 		return monoms.iterator();
 	}
 	
-	
 	public String toString() {
 		Iterator<Monom> iter = iteretor(); 		
 		String output="";
 		int place=0;
 		
+		
 		if(monoms.size()-1==0)//if there is only one element
 			output+=iter.next().toString();
-			
+		
 		if(iter.hasNext())//
-			output+= iter.next().toString();
-			
+			output+= iter.next().toString()+" + ";
+		
 		if(place == monoms.size()-2)//before the last element 
-			output+= " + " +iter.next().toString();
-			
+			output+=iter.next().toString();
+		
 		while(iter.hasNext()) { 
 			output+= iter.next().toString()+" + ";
 			place++;
 			if(place == monoms.size()-2)//before the last element 
 				output+=iter.next().toString();
-			}
-			
-			return output;
+				
 		}
+		
+		return output;
+	}
 	
 	@Override
 	public function initFromString(String s) {
-		function initatePolynom = new Polynom(s);
+		function initatePolynom = new Polynom<>(s);
 		return initatePolynom;
 	}
 }
