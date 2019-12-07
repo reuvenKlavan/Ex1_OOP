@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
-
+import java.io.BufferedReader;
 import com.google.gson.Gson;
 
 public class Functions_GUI implements functions{
@@ -39,11 +39,7 @@ public class Functions_GUI implements functions{
 
 	@Override
 	public boolean contains(Object arg0) {
-		if(arg0 instanceof Monom || arg0 instanceof Polynom || arg0 instanceof ComplexFunction)
-			return collect.contains(arg0);
-		
-		else
-			return false;
+		return collect.contains(arg0);
 	}
 
 	@Override
@@ -63,11 +59,7 @@ public class Functions_GUI implements functions{
 
 	@Override
 	public boolean remove(Object arg0) {
-		if(arg0 instanceof Monom || arg0 instanceof Polynom || arg0 instanceof ComplexFunction)
-			return collect.remove(arg0);
-		
-		else
-			return false;
+		return collect.remove(arg0);
 	}
 
 	@Override
@@ -97,22 +89,47 @@ public class Functions_GUI implements functions{
 
 	@Override
 	public void initFromFile(String file) throws IOException {
-		Gson gson = new Gson();
-		String json = gson.toJson(file);
-		System.out.println(json);
-		saveToFile(json);
+		
+		String line="";
+		
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			Gson gson = new Gson();
+			
+			while((line = reader.readLine())!= null) {
+				String func = line.substring(1, line.length()-2);
+				function tmp = new ComplexFunction(func);
+				collect.add(tmp);
+			}			
+		} 
+		
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}		
 	}
 
 	@Override
 	public void saveToFile(String file) throws IOException {
-		try 
-		{
-			PrintWriter pw = new PrintWriter(new File("function.json"));
-			pw.write(file);
+		Iterator<function> iter = iterator();
+		Gson gson = new Gson();
+		StringBuilder json = new StringBuilder();
+		while(iter.hasNext()) {
+			function next = iter.next();
+			json.append(gson.toJson(next.toString()));
+			if(iter.hasNext()) {	
+				json.append(",");
+				json.append("\n");
+			}	
+		}
+		
+		try{
+			
+			PrintWriter pw = new PrintWriter(new File(file));
+			pw.write(json.toString());
 			pw.close();
 		} 
-		catch (FileNotFoundException e) 
-		{
+		
+		catch (FileNotFoundException e){
 			e.printStackTrace();
 			return;
 		}
@@ -125,6 +142,7 @@ public class Functions_GUI implements functions{
 
 	@Override
 	public void drawFunctions(String json_file) {
+		
 		
 	}
 
