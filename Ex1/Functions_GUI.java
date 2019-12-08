@@ -170,11 +170,22 @@ public class Functions_GUI implements functions{
 		StdDraw.setXscale(rx.get_min(), rx.get_max());
 		StdDraw.setYscale(ry.get_min(), ry.get_max());
 		
-		
+		StdDraw.setPenRadius(0.006);
 		StdDraw.setPenColor(Colors[7]);
-		StdDraw.line(rx.get_min(), 0.0, rx.get_max(), 0.0);
-		StdDraw.line(0.0, ry.get_min(), 0.0, ry.get_max());
+		StdDraw.line(rx.get_min(), 0.0, rx.get_max(), 0.0); // X axis
+		StdDraw.line(0.0, ry.get_min(), 0.0, ry.get_max()); // y axis
 		
+		StdDraw.setPenRadius(0.001);
+		StdDraw.setPenColor(Colors[8]);
+		for (double i = ry.get_min();i < ry.get_max(); i ++) {
+			StdDraw.line(i, ry.get_min(), i, ry.get_max());
+		}
+		
+		for (double i = rx.get_min(); i < rx.get_max(); i ++) {
+			StdDraw.line(rx.get_min(), i, rx.get_max(), i);
+		}
+		
+		StdDraw.setPenRadius(0.003);
 		// plot the approximation to the function
 		for(int a=0;a<collect.size();a++) {
 			int c = a%Colors.length;
@@ -184,7 +195,8 @@ public class Functions_GUI implements functions{
 			for (int i = 0; i < resolution; i++) {
 				StdDraw.line(x[i], yy[a][i], x[i+1], yy[a][i+1]);
 			}
-		}	
+		}
+		
 	}
 	
 

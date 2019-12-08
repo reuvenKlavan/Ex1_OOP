@@ -12,12 +12,12 @@ public class test_GUI {
 		tmp.add(test1);
 		tmp.add(test2);
 		tmp.add(test3);
-		//tmp.saveToFile("function.json");
-		//tmp.initFromFile("function.json");
+		tmp.saveToFile("function.json");
+		tmp.initFromFile("function.json");
 		Range rx = new Range(-10.0, 10.0);
 		Range ry = new Range(-10.0, 10.0);
-		int width = 2000;
-		int height = 800;
+		int width = 800;
+		int height = 600;
 		int resolution = 100; 
 		tmp.drawFunctions(width, height, rx, ry, resolution);
 	}
