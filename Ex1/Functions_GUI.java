@@ -170,6 +170,7 @@ public class Functions_GUI implements functions{
 		StdDraw.setXscale(rx.get_min(), rx.get_max());
 		StdDraw.setYscale(ry.get_min(), ry.get_max());
 		
+		
 		StdDraw.setPenRadius(0.006);
 		StdDraw.setPenColor(Colors[7]);
 		StdDraw.line(rx.get_min(), 0.0, rx.get_max(), 0.0); // X axis
@@ -186,23 +187,36 @@ public class Functions_GUI implements functions{
 		}
 		
 		StdDraw.setPenRadius(0.003);
+		
 		// plot the approximation to the function
 		for(int a=0;a<collect.size();a++) {
 			int c = a%Colors.length;
 			StdDraw.setPenColor(Colors[c]);
-		
+			
+			
 			System.out.println(a+") "+Colors[a]+"  f(x)= "+((ArrayList<function>) collect).get(a));
 			for (int i = 0; i < resolution; i++) {
 				StdDraw.line(x[i], yy[a][i], x[i+1], yy[a][i+1]);
 			}
-		}
-		
+		}	
 	}
 	
 
 	@Override
 	public void drawFunctions(String json_file) {
+		try {
+			initFromFile(json_file);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println(e);
+		}
 		
+		Range rx = new Range(-10.0, 10.0);
+		Range ry = new Range(-10.0, 10.0);
+		int width = 2000;
+		int height = 800;
+		int resolution = 100; 
+		drawFunctions(width, height, rx, ry, resolution);
 		
 	}
 
