@@ -19,6 +19,8 @@ public class ComplexFunction implements complex_function  {
 	}
 	
 	public ComplexFunction(String s) {
+		s = s.replaceAll(" ", "");
+		s = s.replaceAll("X", "x");
 		function tmp = initFromString(s);
 		ComplexFunction constru = (ComplexFunction)tmp;
 		this.left = constru.left();
@@ -28,10 +30,19 @@ public class ComplexFunction implements complex_function  {
 	}
 	
 	
+	public ComplexFunction(String op, function left, function right) {
+		this.left = left;
+		this.right = right;
+		this.Op = ChooseOperation(op);
+	}
 	
 	
 	
 	
+	
+	
+	
+
 	@Override
 	public double f(double x) {
 		double sumRight = 0 , sumLeft = 0;
@@ -147,10 +158,10 @@ public class ComplexFunction implements complex_function  {
 		
 		else if(indexOfBracket!=-1) {
 			boolean found = false;
-			
+			opResult = ChooseOperation(s.substring(0,indexOfBracket));
+
 			
 			for(int i = indexOfBracket+1; i <s.length() && !found;i++) {
-				opResult = ChooseOperation(s.substring(0,indexOfBracket));
 				
 				if(s.charAt(i)=='(') {
 					numOfBrackets++;
@@ -313,10 +324,12 @@ public class ComplexFunction implements complex_function  {
 	
 	@Override
 	public String toString() {
-		String output= "";
+		String output= ChooseString(Op);
+		
+		
 		
 		if(left instanceof Monom || left instanceof Polynom) {
-			output = ChooseString(Op)+ left.toString();
+			output = ChooseString(Op) + left.toString();
 		}
 		
 		else if(left instanceof ComplexFunction) {
@@ -332,7 +345,7 @@ public class ComplexFunction implements complex_function  {
 		}
 		
 		else if(left instanceof ComplexFunction) {
-			output = ','+ output + right.toString() + ')';
+			output =  output +","+ right.toString() + ')';
 		}
 		
 		return output;
@@ -342,14 +355,7 @@ public class ComplexFunction implements complex_function  {
 	
 	
 	
-	/**
-	 * This function checks if the two functions are equal.
-	 *  The logic comparison is out of our reach therefore
-	 *  this equals really implements a function of visual equals, by comparing the value of the two functions in
-	 *  particular range on x axis, in the range [-10,10], and by epsilon (0.001) steps.
-	 *  If all of the function values are equal, then you will get a True answer.
-	 *  Even thought the comparison is not logic, the result is, in most cases, the real logic equality.
-	 */
+	
 	@Override
 	public boolean equals(Object obj) {
 		boolean match = true;

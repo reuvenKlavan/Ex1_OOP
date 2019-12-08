@@ -10,12 +10,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.awt.Color;
 import java.io.BufferedReader;
 import com.google.gson.Gson;
 
 public class Functions_GUI implements functions{
 	
 	private Collection<function> collect;
+	public static Color[] Colors = {Color.blue, Color.cyan, Color.MAGENTA, Color.ORANGE, 
+			Color.red, Color.GREEN, Color.PINK, Color.BLACK, Color.GRAY};
+	
+	
 	
 	public Functions_GUI() {
 		collect = new ArrayList<function>();
@@ -97,7 +102,7 @@ public class Functions_GUI implements functions{
 			Gson gson = new Gson();
 			
 			while((line = reader.readLine())!= null) {
-				String func = line.substring(1, line.length()-2);
+				String func = line.substring(1, line.length()-1);
 				function tmp = new ComplexFunction(func);
 				collect.add(tmp);
 			}			
@@ -117,7 +122,6 @@ public class Functions_GUI implements functions{
 			function next = iter.next();
 			json.append(gson.toJson(next.toString()));
 			if(iter.hasNext()) {	
-				json.append(",");
 				json.append("\n");
 			}	
 		}
@@ -137,8 +141,52 @@ public class Functions_GUI implements functions{
 
 	@Override
 	public void drawFunctions(int width, int height, Range rx, Range ry, int resolution) {
+		if (width<=0) 
+			throw new IllegalArgumentException();
 		
+		if (height<=0)
+			throw new IllegalArgumentException();
+		
+		if(rx.get_min() >= rx.get_max())
+			throw new IllegalArgumentException();
+
+		if(ry.get_min() >= ry.get_max())
+			throw new IllegalArgumentException();
+		
+		
+		
+		StdDraw.setCanvasSize(width, height);
+		double[] x = new double[resolution+1];
+		double[][] yy = new double[collect.size()][resolution+1];
+		double x_step = (rx.get_max()-rx.get_min())/resolution;
+		double x0 = rx.get_min();
+		for (int i=0; i<=resolution; i++) {
+			x[i] = x0;
+			for(int a=0;a<collect.size();a++) {
+				yy[a][i] = ((ArrayList<function>) collect).get(a).f(x[i]);
+			}
+			x0+=x_step;
+		}
+		StdDraw.setXscale(rx.get_min(), rx.get_max());
+		StdDraw.setYscale(ry.get_min(), ry.get_max());
+		
+		
+		StdDraw.setPenColor(Colors[7]);
+		StdDraw.line(rx.get_min(), 0.0, rx.get_max(), 0.0);
+		StdDraw.line(0.0, ry.get_min(), 0.0, ry.get_max());
+		
+		// plot the approximation to the function
+		for(int a=0;a<collect.size();a++) {
+			int c = a%Colors.length;
+			StdDraw.setPenColor(Colors[c]);
+		
+			System.out.println(a+") "+Colors[a]+"  f(x)= "+((ArrayList<function>) collect).get(a));
+			for (int i = 0; i < resolution; i++) {
+				StdDraw.line(x[i], yy[a][i], x[i+1], yy[a][i+1]);
+			}
+		}	
 	}
+	
 
 	@Override
 	public void drawFunctions(String json_file) {
