@@ -7,7 +7,7 @@ public class ComplexFunction implements complex_function  {
 	private Operation Op;
 
 	
-	public ComplexFunction(function left, function right, Operation Op) {
+	public ComplexFunction(Operation Op,function left, function right) {
 		this.left = left;
 		this.right = right;
 		if(right == null && this.Op!=Operation.None) {
@@ -22,20 +22,36 @@ public class ComplexFunction implements complex_function  {
 		s = s.replaceAll(" ", "");
 		s = s.replaceAll("X", "x");
 		function tmp = initFromString(s);
-		ComplexFunction constru = (ComplexFunction)tmp;
-		this.left = constru.left();
-		this.right = constru.right();
-		this.Op = constru.getOp();
+		if(tmp instanceof ComplexFunction) {
+			ComplexFunction cons = (ComplexFunction)tmp;
+			this.left = cons.left();
+			this.right = cons.right();
+			this.Op = cons.getOp();
+		}
+		
+		else {
+			this.left = tmp;
+			this.right = null;
+			this.Op = Operation.None;
+		}
 		
 	}
 	
-	
-	public ComplexFunction(String op, function left, function right) {
-		this.left = left;
-		this.right = right;
-		this.Op = ChooseOperation(op);
+	public ComplexFunction(function fun) {
+		if(fun instanceof ComplexFunction) {
+			ComplexFunction clone = (ComplexFunction) fun.copy();
+			this.left = clone.left();
+			this.right = clone.right();
+			this.Op = clone.getOp();
+		}
+		
+		else if(fun instanceof Polynom || fun instanceof Monom) {
+			this.left = fun;
+			this.right = null;
+			this.Op = Operation.None;
+		}
+		
 	}
-	
 	
 	
 	
@@ -101,7 +117,7 @@ public class ComplexFunction implements complex_function  {
 			}
 		
 		case Error:	
-			throw new IllegalArgumentException("You try to by 0");
+			throw new IllegalArgumentException("You try to divide by 0");
 			
 		case Max:
 			if(sumRight>sumLeft) {
@@ -189,7 +205,7 @@ public class ComplexFunction implements complex_function  {
 			
 		}
 		
-		function output = new ComplexFunction(leftResult, rightResult, opResult);
+		function output = new ComplexFunction( opResult ,leftResult, rightResult);
 		return output;
 		
 	}
@@ -243,7 +259,7 @@ public class ComplexFunction implements complex_function  {
 		}
 		
 		cloneOP = this.Op;
-		function clone = new ComplexFunction(cloneLeft, cloneRight, cloneOP); 
+		function clone = new ComplexFunction(cloneOP ,cloneLeft, cloneRight); 
 		return clone;
 	}
 	
@@ -255,7 +271,7 @@ public class ComplexFunction implements complex_function  {
 
 	@Override
 	public void plus(function f1) {
-		function tmp = new ComplexFunction(left,right,Op);
+		function tmp = new ComplexFunction(Op,left,right);
 		this.left = tmp;
 		this.right = f1;
 		this.Op = Operation.Plus;
@@ -263,7 +279,7 @@ public class ComplexFunction implements complex_function  {
 
 	@Override
 	public void mul(function f1) {
-		function tmp = new ComplexFunction(left,right,Op);
+		function tmp = new ComplexFunction(Op,left,right);
 		this.left = tmp;
 		this.right = f1;
 		this.Op = Operation.Times;
@@ -271,7 +287,7 @@ public class ComplexFunction implements complex_function  {
 
 	@Override
 	public void div(function f1) {
-		function tmp = new ComplexFunction(left,right,Op);
+		function tmp = new ComplexFunction(Op,left,right);
 		this.left = tmp;
 		this.right = f1;
 		this.Op = Operation.Divid;		
@@ -279,7 +295,7 @@ public class ComplexFunction implements complex_function  {
 
 	@Override
 	public void max(function f1) {
-		function tmp = new ComplexFunction(left,right,Op);
+		function tmp = new ComplexFunction(Op,left,right);
 		this.left = tmp;
 		this.right = f1;
 		this.Op = Operation.Max;		
@@ -287,7 +303,7 @@ public class ComplexFunction implements complex_function  {
 
 	@Override
 	public void min(function f1) {
-		function tmp = new ComplexFunction(left,right,Op);
+		function tmp = new ComplexFunction(Op,left,right);
 		this.left = tmp;
 		this.right = f1;
 		this.Op = Operation.Min;		
@@ -295,7 +311,7 @@ public class ComplexFunction implements complex_function  {
 
 	@Override
 	public void comp(function f1) {
-		function tmp = new ComplexFunction(left,right,Op);
+		function tmp = new ComplexFunction(Op,left,right);
 		this.left = tmp;
 		this.right = f1;
 		this.Op = Operation.Comp;		
@@ -410,6 +426,10 @@ public class ComplexFunction implements complex_function  {
 		
 		else if(this.Op == Operation.Comp) {
 			return "Comp(";
+		}
+		
+		else if(this.Op == Operation.None) {
+			return "None(";
 		}
 		
 		else {
