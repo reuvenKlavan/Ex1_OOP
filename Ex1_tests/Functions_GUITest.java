@@ -1,15 +1,27 @@
 package Ex1Testing;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Ex1.ComplexFunction;
 import Ex1.Functions_GUI;
 import Ex1.Monom;
+import Ex1.Operation;
 import Ex1.Polynom;
 import Ex1.Range;
 import Ex1.function;
+import Ex1.functions;
 /**
+ * Note: minor changes (thanks to Amichai!!)
+ * The use of "get" was replaced by iterator!
+ * 
  * Partial JUnit + main test for the GUI_Functions class, expected output from the main:
  * 0) java.awt.Color[r=0,g=0,b=255]  f(x)= plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x +5.0)
 1) java.awt.Color[r=0,g=255,b=255]  f(x)= plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x -4.0)),2.0)
@@ -24,38 +36,93 @@ import Ex1.function;
  */
 class Functions_GUITest {
 	public static void main(String[] a) {
-		Functions_GUI data = FunctionsFactory();
+		functions data = FunctionsFactory();
 		int w=1000, h=600, res=200;
 		Range rx = new Range(-10,10);
 		Range ry = new Range(-5,15);
 		data.drawFunctions(w,h,rx,ry,res);
+		String file = "function_file.txt";
+		String file2 = "function_file2.txt";
+		try {
+			data.saveToFile(file);
+			Functions_GUI data2 = new Functions_GUI();
+			data2.initFromFile(file);
+			data.saveToFile(file2);
+		}
+		catch(Exception e) {e.printStackTrace();}
+		
+		String JSON_param_file = "GUI_params.txt.json";
+		System.out.println();
+		data.drawFunctions(JSON_param_file);
 	}
-	private Functions_GUI _data=null;
-//	@BeforeAll
-//	static void setUpBeforeClass() throws Exception {
-//	}
+	
+	private functions _data=null;
+	
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		System.out.println("starting the Junit");
+	}
 
 	@BeforeEach
 	void setUp() throws Exception {
 		_data = FunctionsFactory();
 	}
 
-	//@Test
+	@Test
 	void testFunctions_GUI() {
-	//	fail("Not yet implemented");
+		
 	}
 
-	//@Test
-	void testInitFromFile() {
-	//	fail("Not yet implemented");
+	@Test
+	void testInitFromFile() throws IOException {
+		Functions_GUI tmp1 = new Functions_GUI();
+		tmp1.addAll(_data);
+		tmp1.saveToFile("function2.txt");
+		boolean same = true;
+		Functions_GUI tmp2 = new Functions_GUI();
+		tmp2.initFromFile("function2.txt");
+		Iterator<function> iter1 = tmp1.iterator();
+		Iterator<function> iter2 = tmp2.iterator();
+		while(iter1.hasNext() && iter2.hasNext() && same) {
+			
+			function next1 = iter1.next();
+			function next2 = iter2.next();
+			same = next1.equals(next2);
+					
+			if((!iter1.hasNext() && iter2.hasNext()) || (iter1.hasNext() && !iter2.hasNext())) {
+				same = false;
+			}
+		}
+		assertEquals(true, same);
 	}
 
-	//@Test
-	void testSaveToFile() {
-	//	fail("Not yet implemented");
+	@Test
+	void testSaveToFile() throws IOException {
+		function test1 = new ComplexFunction("Times(x+1,Plus(x^2+5,x-3))");
+		function test2 = new ComplexFunction("Times(Divid(x^2+6,x+3),Plus(x^2+5,x-3))");
+		function test3 = new ComplexFunction("Plus(x+5,Min(x+5,x-3))");
+		Functions_GUI tmp1 = new Functions_GUI();
+		tmp1.add(test1);
+		tmp1.add(test2);
+		tmp1.add(test3);
+		tmp1.saveToFile("function.txt");
+		Functions_GUI tmp2 = new Functions_GUI();
+		tmp2.initFromFile("function.txt");
+		boolean same = true;
+		Iterator<function> iter1 = tmp1.iterator();
+		Iterator<function> iter2 = tmp2.iterator();
+		while(iter1.hasNext() && iter2.hasNext()){
+			function complex1 = iter1.next();
+			function complex2 = iter2.next();
+			if(!(complex1.equals(complex2))) {
+				same = false;
+			}
+		}
+		
+		assertEquals(same,true);
 	}
 
-	//@Test
+	@Test
 	void testDrawFunctions() {
 		//_data.drawFunctions();
 	//	fail("Not yet implemented");
@@ -63,24 +130,24 @@ class Functions_GUITest {
 
 	@Test
 	void testDrawFunctionsIntIntRangeRangeInt() {
-		_data.drawFunctions();
-		//fail("Not yet implemented");
+		
+
 	}
-	public static Functions_GUI FunctionsFactory() {
-		Functions_GUI ans = new Functions_GUI();
+	public static functions FunctionsFactory() {
+		functions ans = new Functions_GUI();
 		String s1 = "3.1 +2.4x^2 -x^4";
 		String s2 = "5 +2x -3.3x +0.1x^5";
 		String[] s3 = {"x +3","x -2", "x -4"};
-		Polynom p1 = new Polynom(s1);
-		Polynom p2 = new Polynom(s2);
-		Polynom p3 = new Polynom(s3[0]);
+		Polynom<Monom> p1 = new Polynom<>(s1);
+		Polynom<Monom> p2 = new Polynom<>(s2);
+		Polynom<Monom> p3 = new Polynom<>(s3[0]);
 		ComplexFunction cf3 = new ComplexFunction(p3);
 		for(int i=1;i<s3.length;i++) {
-			cf3.mul(new Polynom(s3[i]));
+			cf3.mul(new Polynom<>(s3[i]));
 		}
 		
-		ComplexFunction cf = new ComplexFunction("plus", p1,p2);
-		ComplexFunction cf4 = new ComplexFunction("div", new Polynom("x +1"),cf3);
+		ComplexFunction cf = new ComplexFunction(Operation.Plus, p1,p2);
+		ComplexFunction cf4 = new ComplexFunction(Operation.Divid, new Polynom<>("x +1"),cf3);
 		cf4.plus(new Monom("2"));
 		ans.add(cf.copy());
 		ans.add(cf4.copy());
@@ -91,15 +158,17 @@ class Functions_GUITest {
 		function cf6 = cf4.initFromString(s2);
 		ans.add(cf5.copy());
 		ans.add(cf6.copy());
-		ComplexFunction max = new ComplexFunction(ans.get(0).copy());
-		ComplexFunction min = new ComplexFunction(ans.get(0).copy());
-		for(int i=1;i<ans.size();i++) {
-			max.max(ans.get(i));
-			min.min(ans.get(i));
+		Iterator<function> iter = ans.iterator();
+		function f = iter.next();
+		ComplexFunction max = new ComplexFunction(f);
+		ComplexFunction min = new ComplexFunction(f);
+		while(iter.hasNext()) {
+			f = iter.next();
+			max.max(f);
+			min.min(f);
 		}
 		ans.add(max);
-		ans.add(min);
-		
+		ans.add(min);		
 		return ans;
 	}
 }
