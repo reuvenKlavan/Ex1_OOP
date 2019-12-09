@@ -176,33 +176,41 @@ public class ComplexFunction implements complex_function  {
 			boolean found = false;
 			opResult = ChooseOperation(s.substring(0,indexOfBracket));
 
-			
-			for(int i = indexOfBracket+1; i <s.length() && !found;i++) {
-				
-				if(s.charAt(i)=='(') {
-					numOfBrackets++;
-					left = left+'(';
-				}
-				
-				else if(s.charAt(i)==')') {
-					numOfBrackets--;
-					left = left+')';
-				}
-				
-				else if(numOfBrackets==1 && s.charAt(i)==',') {
-					right = s.substring(i+1,s.length()-1);										
-					leftResult = initFromString(left);					
-					rightResult = initFromString(right);
-					
-					found = !found;
-				}
-				
-				else
-					left = left + s.charAt(i);
-					
+			if(opResult == Operation.None) {
+				int indexOfCloseBracket = s.indexOf(')');
+				left = s.substring(indexOfBracket+1, indexOfCloseBracket);
+				leftResult = initFromString(left);					
+				rightResult = null;					
 			}
 			
+			else {
+				for(int i = indexOfBracket+1; i <s.length() && !found;i++) {
+				
+					if(s.charAt(i)=='(') {
+						numOfBrackets++;
+						left = left+'(';
+					}
+				
+					else if(s.charAt(i)==')') {
+						numOfBrackets--;
+						left = left+')';
+					}
+				
+					else if(numOfBrackets==1 && s.charAt(i)==',') {
+						right = s.substring(i+1,s.length()-1);										
+						leftResult = initFromString(left);					
+						rightResult = initFromString(right);
+					
+						found = !found;
+					}
+				
+					else
+						left = left + s.charAt(i);
+					
+				}
 			
+			}
+		
 		}
 		
 		function output = new ComplexFunction( opResult ,leftResult, rightResult);
@@ -377,7 +385,7 @@ public class ComplexFunction implements complex_function  {
 		boolean match = true;
 		if(obj instanceof function) {
 			function check = (function)obj;
-			double eps = 0.001; 
+			double eps = 0.01; 
 			double x = -10.0;
 			while(x<10.0 && match) {
 				if(this.f(x) == check.f(x)) 
@@ -439,31 +447,31 @@ public class ComplexFunction implements complex_function  {
 
 	private Operation ChooseOperation(String s) { 
 		
-		if(s.equals("Plus")) {
+		if(s.equals("Plus")||s.equals("plus")) {
 			return Operation.Plus;
 		}
 		
-		else if(s.equals("Times")) {
+		else if(s.equals("Times")||s.equals("mul")) {
 			return Operation.Times;
 		}
 		
-		else if(s.equals("Divid")) {
+		else if(s.equals("Divid")||s.equals("div")) {
 			return Operation.Divid;
 		}
 		
-		else if(s.equals("Max")) {
+		else if(s.equals("Max")||s.equals("max")) {
 			return Operation.Max;
 		}
 		
-		else if(s.equals("Min")) {
+		else if(s.equals("Min")||s.equals("min")) {
 			return Operation.Min;
 		}
 		
-		else if(s.equals("Comp")) {
+		else if(s.equals("Comp")||s.equals("comp")) {
 			return Operation.Comp;
 		}
 		
-		else if(s.equals("None")) {
+		else if(s.equals("None")||s.equals("none")) {
 			return Operation.None;
 		}
 		

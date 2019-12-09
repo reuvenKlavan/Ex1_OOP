@@ -223,11 +223,24 @@ public class Polynom<T> implements Polynom_able{
 	@Override
 	public boolean equals(Object obj) {
 		
-		if(!(obj instanceof Polynom)) {
+		if(!(obj instanceof function)) {
 			return false;
 		}
 		
-		Polynom<Monom> p1 = (Polynom<Monom>)obj;
+		ComplexFunction tmp;
+		function p;
+		Polynom<Monom> p1 = null;
+		if(obj instanceof ComplexFunction) {
+			tmp = (ComplexFunction)obj;
+			p = tmp.left();
+			if(p instanceof Polynom<?>) {
+				p1 = (Polynom<Monom>)p;
+			}
+			
+			else
+				return false;
+		}
+		
 		Monom_Comperator comparePolynom = new Monom_Comperator();
 		Iterator<Monom> iter1 = iteretor();
 		Iterator<Monom> iter2 = p1.iteretor();

@@ -101,7 +101,7 @@ public class Functions_GUI implements functions{
 			
 			BufferedReader reader = new BufferedReader(new FileReader(file));			
 			while((line = reader.readLine())!= null) {
-				String func = line.substring(0, line.length()-1);
+				String func = line.substring(0, line.length());
 				function tmp = new ComplexFunction(func);
 				collect.add(tmp);
 			}			
