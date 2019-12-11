@@ -58,4 +58,4 @@ it also should support the following:
 - Monomial: https://en.wikipedia.org/wiki/Monomial
 - Derivative: https://en.wikipedia.org/wiki/Derivative
 
-#### this project was written by @joseph_schtein(t.z) & @Reuven_Klavan(205416365)
+#### this project was written by @joseph_schtein(206128613) & @Reuven_Klavan(205416365)
