@@ -1,6 +1,8 @@
 package Ex1;
 
 
+
+
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Comparator;
@@ -27,7 +29,7 @@ public class Polynom<T> implements Polynom_able{
 	 * Zero (empty polynom)
 	 */
 	public Polynom() {
-		monoms=new ArrayList<>();
+		monoms=new ArrayList();
 		
 	}
 	/**
@@ -37,6 +39,7 @@ public class Polynom<T> implements Polynom_able{
 	 */
 	public Polynom(String s) {
 		s = s.replaceAll(" ", "");
+		s = s.replaceAll("X", "x");
 		monoms= new ArrayList<>();
 		String monom = "";
 		
@@ -79,18 +82,24 @@ public class Polynom<T> implements Polynom_able{
 		Comparator<Monom> com = new Monom_Comperator();
 		monoms.sort(com);
 	}	
-	
+	/**
+	 * this method return the value of a function for the value x
+	 * @param x value of the x axis
+	 */
 	@Override
 	public double f(double x) {
 		double function = 0;
 		Iterator<Monom> iter = iteretor(); 
 		while(iter.hasNext()) {
 			Monom m = iter.next();
-			function = function + m.f(x);
+			function = function + m.get_coefficient()*Math.pow(x, m.get_power());
 		}
 		return function;
 	}
-
+	/**
+	 * add 2 polynoms by we send every monom of p1 to the method add between monom and polynom 
+	 * @param p1 a polynom that add with this polynom
+	 */
 	@Override
 	public void add(Polynom_able p1) {
 		Iterator<Monom> iter = p1.iteretor();  
@@ -99,8 +108,13 @@ public class Polynom<T> implements Polynom_able{
 		}
 	}
 
+	/**
+	 * adding for this polynom monom m1
+	 * @param m1 the monom we add to this polynom
+	 */
 	@Override
 	public void add(Monom m1){
+		
 		if(m1 == null) {
 			throw new IllegalArgumentException("monom is a null");
 		}
@@ -142,15 +156,18 @@ public class Polynom<T> implements Polynom_able{
 		if(!foundPower)// adding in the end of the polynom
 			monoms.add(place, m1);
 		
-		int size = monoms.size();
-		Monom last = monoms.get(size-1);
-		if(last.isZero())
-			monoms.remove(size-1);
 		
-	}		
 	
+		int size = monoms.size();
+		if(monoms.get(size-1).isZero()) {
+			monoms.remove(size-1);
+		}
+	}	
 	
-	
+	/**
+	 * substract polynoms by multiply every monom in p1 by -1 and addthe new monom to this polynom
+	 * @param p1 the polynom we substract from this polynom 
+	 */
 	@Override
 	public void substract(Polynom_able p1) {
 		Iterator<Monom> iter = p1.iteretor();  
@@ -158,7 +175,7 @@ public class Polynom<T> implements Polynom_able{
 		double coefficiant = 0;
 		Monom toSubstract;
 		
-		while(iter.hasNext()) {
+		while(iter.hasNext()) {// multiply every monom in p1 by -1 and "add" this for this polynom
 			
 			toSubstract = iter.next();
 			power = toSubstract.get_power();
@@ -168,27 +185,33 @@ public class Polynom<T> implements Polynom_able{
 		}	
 	}
 
+	/**
+	 * multiply between 2 polynoms,  first create array of polynoms in the size of p1,
+	 * for every copy polynom in that array multiply by monom from p1, 
+	 * and in the end summarize of these polynoms in the array and we got multiplication of 2 polynoms 
+	 * @param p1 a polynom we want to multiply him by this 
+	 */
 	@Override
 	public void multiply(Polynom_able p1) {
 		Iterator<Monom> iterP1 = p1.iteretor();
-		int p1Size = sizeOfFunction(p1);
+		int p1Size = sizeOfPolynomAble(p1);// private method that return the size of p1
 		int place = 0;
 		Polynom_able[] tmp = new Polynom[p1Size];
 		
-		for(int i=0; i<tmp.length; i++) {
+		for(int i=0; i<tmp.length; i++) {//copy this for every cell in tmp
 			tmp[i] = copy();
 		}
-		while(iterP1.hasNext()) {
+		while(iterP1.hasNext()) {//multiply every polynom by monom from p1
 			Monom next = iterP1.next();
 			tmp[place].multiply(next);
 			place++;
 		}
 		
-		for(int i=1; i<tmp.length; i++) {
+		for(int i=1; i<tmp.length; i++) {//summarize the polynoms
 			tmp[0].add(tmp[i]);
 		}
 		
-		while(monoms.size()>0)
+		while(monoms.size()>0)//Delete the current polynom and replace is by tmp[0] the new multiply polynom
 			monoms.remove(0);
 		
 	
@@ -198,7 +221,10 @@ public class Polynom<T> implements Polynom_able{
 		}
 		
 	}
-	
+	/**
+	 * multiply polynom by monom
+	 * @param m1 the monom we multiply by this polynom
+	 */
 	@Override
 	public void multiply(Monom m1) {
 		Iterator<Monom> iter = iteretor(); 		
@@ -207,8 +233,13 @@ public class Polynom<T> implements Polynom_able{
 			tmp.multipy(m1);		
 		}	
 	}
+	/**
+	 * check how many monoms there is for polynom_able
+	 * @param p1
+	 * @return the number of monoms in p1
+	 */
 	
-	private int sizeOfFunction(Polynom_able p1) {
+	private int sizeOfPolynomAble(Polynom_able p1) {
 		Iterator<Monom> iter = p1.iteretor();
 		int size = 0;
 		
@@ -219,21 +250,25 @@ public class Polynom<T> implements Polynom_able{
 		
 		return size;
 	}
-
+	/**
+	* check if this == p1 by the number of monoms in 2 of them and by there value
+	* @param p1 a Polynom _able for checkif he equal to this Polynom
+	* @return true if p1=this, false if p1!=this
+	*/
 	@Override
 	public boolean equals(Object obj) {
 		
-		if(!(obj instanceof function)) {
+		if(!(obj instanceof function)) {//if it is an object that is not implement you can't be equal 
 			return false;
 		}
 		
 		ComplexFunction tmp;
 		function p;
 		Polynom<Monom> p1 = null;
-		if(obj instanceof ComplexFunction) {
+		if(obj instanceof ComplexFunction) {//in case of Complex function is None(function,null)
 			tmp = (ComplexFunction)obj;
 			p = tmp.left();
-			if(p instanceof Polynom<?>) {
+			if(p instanceof Polynom<?> && tmp.right() == null) {//if left is Polynom check if this Polynom equals to left else return false
 				p1 = (Polynom<Monom>)p;
 			}
 			

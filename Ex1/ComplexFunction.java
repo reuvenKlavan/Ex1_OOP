@@ -15,13 +15,18 @@ public class ComplexFunction implements complex_function  {
 	 * @param right same as the left
 	 */
 	public ComplexFunction(Operation Op,function left, function right) {//trivial Constructor
-		this.left = left;
-		this.right = right;
-		if(right == null && this.Op!=Operation.None) {
-			this.Op = Operation.None;
+		if(Op == Operation.Error) {
+			throw new IllegalArgumentException("The operation is error");
 		}
-		else {
-			this.Op = Op;
+		else {	
+			this.left = left;
+			this.right = right;
+			if(right == null && Op!=Operation.None) {
+				this.Op = Operation.None;
+			}
+			else {
+				this.Op = Op;
+			}
 		}	
 	}
 	
@@ -49,13 +54,20 @@ public class ComplexFunction implements complex_function  {
 	}
 	
 	public ComplexFunction(Object obj) {//copy constructor
+		
 		if(obj instanceof ComplexFunction) {//if it is complex function
 			ComplexFunction tmp =  (ComplexFunction) obj;
 			ComplexFunction clone = (ComplexFunction) tmp.copy();
 			this.left = clone.left();
 			this.right = clone.right();
-			this.Op = clone.getOp();
+			if(clone.getOp()!=Operation.Error)
+				this.Op = clone.getOp();
+			
+			else
+				throw new IllegalArgumentException("that is not legal function");
 		}
+			
+		
 		
 		else if(obj instanceof Polynom || obj instanceof Monom) {//else if it is Polynom or Monom
 			function tmp = (function)obj;
@@ -63,6 +75,11 @@ public class ComplexFunction implements complex_function  {
 			this.left = clone;
 			this.right = null;
 			this.Op = Operation.None;
+			}
+		
+		else {
+			throw new IllegalArgumentException("that is not legal obj");
+
 		}
 		
 	}
@@ -125,17 +142,16 @@ public class ComplexFunction implements complex_function  {
 			return sumLeft*sumRight;
 			
 		case Divid:
-			try {
+			if(sumRight != 0)//we check if we can divide if not we continue to the Error case
 				return sumLeft/sumRight;
-			}
-			
-			catch(Exception e){
-				
-			}
 		
 		case Error:	
-			throw new IllegalArgumentException("you try to divide by 0 or the Operator is not good");//if the Operator didn't initiate well or we try to divide by 0  
+			if(sumRight == 0)
+				throw new IllegalArgumentException("you try to divide by 0 ");//we try to divide by 0  
 			
+			else {
+				throw new IllegalArgumentException("the Operator is not good");//if the Operator didn't initiate well
+			}
 		case Max:
 			if(sumRight>sumLeft) {
 				return sumRight;
@@ -513,7 +529,7 @@ public class ComplexFunction implements complex_function  {
 		}
 		
 		else {
-			return Operation.Error;
+			throw new IllegalArgumentException("The string for choose the operator is incorrect");
 		}
 	}
 
