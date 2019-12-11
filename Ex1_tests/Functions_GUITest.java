@@ -1,6 +1,7 @@
 package Ex1Testing;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ class Functions_GUITest {
 		}
 		catch(Exception e) {e.printStackTrace();}
 		
-		String JSON_param_file = "GUI_params.txt.json";
+		String JSON_param_file = "GUI_params.json";
 		System.out.println();
 		data.drawFunctions(JSON_param_file);
 	}
@@ -70,7 +71,17 @@ class Functions_GUITest {
 
 	@Test
 	void testFunctions_GUI() {
-		
+		Functions_GUI test1 = new Functions_GUI();
+		test1.addAll(_data);
+		Functions_GUI test2 = new Functions_GUI();
+		function tmp1 = new ComplexFunction("Times(x+1,Plus(x^2+5,x-3))");
+		function tmp2 = new ComplexFunction("Times(Divid(x^2+6,x+3),Plus(x^2+5,x-3))");
+		function tmp3 = new ComplexFunction("Plus(x+5,Min(x+5,x-3))");
+		test2.add(tmp1);
+		test2.add(tmp2);
+		test2.add(tmp3);
+		boolean same  = test1.equals(test2);
+		assertEquals(same,false);
 	}
 
 	@Test
@@ -122,17 +133,14 @@ class Functions_GUITest {
 		assertEquals(same,true);
 	}
 
-	@Test
-	void testDrawFunctions() {
-		//_data.drawFunctions();
-	//	fail("Not yet implemented");
-	}
-
-	@Test
-	void testDrawFunctionsIntIntRangeRangeInt() {
+	@Test 
+	void testInitFromFile1() throws IOException {
 		
-
+		
 	}
+
+	
+	
 	public static functions FunctionsFactory() {
 		functions ans = new Functions_GUI();
 		String s1 = "3.1 +2.4x^2 -x^4";
