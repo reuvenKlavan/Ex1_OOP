@@ -198,11 +198,9 @@ public class Functions_GUI implements functions{
 						}
 						
 						else {//right.f(x0)=0 and Operator = divide that mean asymptotic
-							if(((ComplexFunction) ((ArrayList<function>) collect).get(a)).left().f(x0)>0)//go to positive infinity
 								yy[a][i] = Double.MAX_VALUE;
 							
-							else//go to negative infinity
-								yy[a][i] = Double.MIN_VALUE;
+						
 						}
 					}
 				}
