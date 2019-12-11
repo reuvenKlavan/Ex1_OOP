@@ -187,7 +187,29 @@ public class Functions_GUI implements functions{
 		for (int i=0; i<=resolution; i++) {//step on the x axis
 			x[i] = x0;
 			for(int a=0;a<collect.size();a++) {//compute the f(x) for the a index function
-				yy[a][i] = ((ArrayList<function>) collect).get(a).f(x[i]);
+				if(((ArrayList<function>) collect).get(a) instanceof ComplexFunction) {//if you are complex function
+					if(((ComplexFunction) ((ArrayList<function>) collect).get(a)).getOp() != Operation.Divid) {//if your operation isn't divide
+						yy[a][i] = ((ArrayList<function>) collect).get(a).f(x[i]);
+					}
+					
+					else {
+						if(((ComplexFunction) ((ArrayList<function>) collect).get(a)).right().f(x0)!=0) {//if we divide by a value that different from zero
+							yy[a][i] = ((ArrayList<function>) collect).get(a).f(x[i]);
+						}
+						
+						else {//right.f(x0)=0 and Operator = divide that mean asymptotic
+							if(((ComplexFunction) ((ArrayList<function>) collect).get(a)).left().f(x0)>0)//go to positive infinity
+								yy[a][i] = Double.MAX_VALUE;
+							
+							else//go to negative infinity
+								yy[a][i] = Double.MIN_VALUE;
+						}
+					}
+				}
+				
+				else {//if you polynom or monom 
+					yy[a][i] = ((ArrayList<function>) collect).get(a).f(x[i]);
+				}
 			}
 			x0+=x_step;
 		}
