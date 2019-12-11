@@ -1,20 +1,27 @@
 # Complex Function - Ex1 OOP project
-This project implements basic operators on functions of ComplexFunction, polynom and monom such as Plus, Times, Divid, Max, Min, Comp and None.
+The Complex Function
 
-The Complex function can recive any kind complex function with the operators from the above. the comlex function should be rittin as in the
-example: OP(CP1, CP2). while the string can contain multiple oprators in every complex function.
-The complex function can as well read a string from a file, and as well right the comlex function as a string to a file.
-The complex function also implements a GUI class that draws the function on a graph with X and Y axis.
+## The Complex function can recive any kind of complex function with the operators deataild below. the comlex function can be represented by four ways:
+1. An operator and two Complex Functions in parenthesis with a comma bitween them.
+2. An operator and a Complex Function or a Polynom or a Monom in parenthesis of ether side the comma.
+3. An operator and two Polynoms in parenthesis with a comma bitween them.
+4. An operator and two Monoms in parenthesis with a comma bitween them.
+5. An operator and a Polynom and a Monom in parenthesis of ether side the comma.
 
-ComplexFunction has the folloing methods:
-1.
-2.
-3.
-4.
-5.
+The Complex Function is a string  that can contain multiple oprators in every complex function. The complex function can as well read a string from a file, and also right the comlex function as a string to a file.
+The complex function implements a GUI class that draws the function on a graph with X and Y axis.
+
+## ComplexFunction has the folloing operators:
+1. Times
+2. Plus
+3. Divid
+4. Max
+5. Min
+4. Comp
+6. None
 
 
-The Monom class can receive any symple monom of the form "+-ax^b" while 'a' belongs to the real numbers and 'b' belongs to the Natural numbers.
+## The Monom class can receive any symple monom of the form "+-ax^b" while 'a' belongs to the real numbers and 'b' belongs to the Natural numbers.
 
 The polynom class represents a Polynom with add, multiply functionality witch can receive any kind of addition and subtraction of monom type objects of the form "ax^b + cx^d +e" while 'a','c' and 'e' belongs to the real numbers, and 'b' and 'd' belong to the natural numbers.
 it also should support the following:
